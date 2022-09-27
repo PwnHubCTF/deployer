@@ -3,10 +3,16 @@ import { InstancesController } from './instances.controller';
 import { InstancesService } from './instances.service';
 import { BullModule } from '@nestjs/bull';
 import { InstancesProcessor } from './instances.processor';
+import { join } from 'path';
+import { Instance } from './entities/instance.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 
 @Module({
-  imports: [BullModule.registerQueue({
+  imports: [TypeOrmModule.forFeature([Instance]),
+  BullModule.registerQueue({
     name: 'build',
+    processors: [join(__dirname, 'processor.js')],
   })
   ],
   controllers: [InstancesController],

@@ -13,7 +13,19 @@ export class InstancesService {
     }
 
     async createInstance (payload: DeployInstanceDto) {
-        await this.buildQueue.add('deploy', payload)
+        let activeJobs = await this.buildQueue.getJobs(['active'])
+        let activeJobsCount = activeJobs.filter(j => j.data.owner === payload.owner).length
+        if (activeJobsCount >= 1) return { "status": "error", "message": "You already have an instance in build" }
+
+        let waitingJobs = await this.buildQueue.getJobs(['waiting'])
+        let waitingJobsCount = waitingJobs.filter(j => j.data.owner === payload.owner).length
+        if (waitingJobsCount >= 1) return { "status": "error", "message": "You already have a build in queue" }
+
+        await this.buildQueue.add({
+            owner: payload.owner,
+            githubUrl: payload.githubUrl
+        })
+        return { "status": "enqueued" }
     }
 }
 
