@@ -25,6 +25,6 @@ export class InstancesDestroyProcessor {
 
     @OnQueueActive()
     onActive (job: Job) {
-        this.logger.debug(`Processing job ${job.id} of type ${job.name} with data ${JSON.stringify(job.data)}`);
+        this.logger.debug(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
     }
 }

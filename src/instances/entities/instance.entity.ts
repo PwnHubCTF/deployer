@@ -3,7 +3,7 @@ import { CustomBaseEntity } from "src/custom-base.entity";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity({
-    name: 'instance',
+    name: 'instances',
 })
 export class Instance extends CustomBaseEntity {
     @Column()
