@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 import { Instance } from './entities/instance.entity';
 
 @Processor('build')
-export class InstancesProcessor {
-    private readonly logger = new Logger(InstancesProcessor.name);
+export class InstancesBuildProcessor {
+    private readonly logger = new Logger(InstancesBuildProcessor.name);
 
     constructor(
         @InjectRepository(Instance)
@@ -24,7 +24,16 @@ export class InstancesProcessor {
     async onComplete (job: Job, result: any) {
         this.logger.debug(`Job ${job.id} finished ! ${JSON.stringify(result)}`);
 
-        await this.instanceRepository.create({ githubUrl: job.data.githubUrl, owner: job.data.owner, port: result.port }).save()
+        try {
+            await this.instanceRepository.create({
+                githubUrl: job.data.githubUrl,
+                owner: job.data.owner,
+                team: job.data.team,
+                port: result.port
+            }).save()
+        } catch (error) {
+            this.logger.error(`Error while create new instance in DB ${error.name} -> ${error.message}`);
+        }
     }
 
     @OnQueueFailed()

@@ -6,13 +6,16 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
     name: 'instance',
 })
 export class Instance extends CustomBaseEntity {
-    @Column({ type: 'text' })
+    @Column()
+    team: string
+
+    @Column({ unique: true })
     owner: string
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', unique: true })
     port: number
 
-    @Column({ type: 'text' })
+    @Column()
     githubUrl: string
 }
 
