@@ -1,16 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export class UpdateKeyDto {
+export class DeployInstanceDto {
     @ApiProperty({
-        required: true,
+        required: true
     })
     @IsNotEmpty()
-    key: string
+    githubUrl: string;
+
 
     @ApiProperty({
-        required: true,
+        required: true
     })
     @IsNotEmpty()
-    value: string
+    owner: string;
 }

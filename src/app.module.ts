@@ -4,12 +4,14 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './middleware/auth.middleware';
+import { BullModule } from '@nestjs/bull';
+import { InstancesModule } from './instances/instances.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: process.env.DB_HOST,
       port: 3306,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
@@ -17,7 +19,11 @@ import { AuthMiddleware } from './middleware/auth.middleware';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    AuthModule],
+    BullModule.forRoot({
+      url: process.env.REDIS_URL
+    }),
+    AuthModule,
+    InstancesModule],
   controllers: [AppController],
   providers: [AppService],
 })
