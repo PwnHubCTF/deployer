@@ -16,7 +16,7 @@ export default async function (job: Job, cb: DoneCallback) {
 
 
 
-
+  // Return the port of the deployed challenge
   cb(null, {
     port: 5280
   });

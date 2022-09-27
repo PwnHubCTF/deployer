@@ -7,11 +7,11 @@ export default async function (job: Job, cb: DoneCallback) {
   /*
    * job.data ->
    * {
-        owner -> ID of the user who want to destroy the chall 
+        owner: string -> ID of the user who want to destroy the chall 
    * }
    */
   logger.debug(`[${process.pid}] ${JSON.stringify(job.data)}`);
 
-
-  cb(null, "destroyed");
+  if (job.data.owner) { cb(null, "destroyed"); }
+  else { cb(new Error('Unable to destroy the challenge. Owner not found')); }
 }
