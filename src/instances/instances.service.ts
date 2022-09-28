@@ -34,7 +34,7 @@ export class InstancesService {
 
         // destroy task
         await this.destroyQueue.add({
-            owner: owner
+            projectName: instance.composeProjectName
         })
         return { "status": "Destroy enqueued" }
     }

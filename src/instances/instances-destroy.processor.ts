@@ -27,4 +27,18 @@ export class InstancesDestroyProcessor {
     onActive (job: Job) {
         this.logger.debug(`Processing job ${job.id} with data ${JSON.stringify(job.data)}`);
     }
+
+    @OnQueueFailed()
+    onFailed (job: Job, err: Error) {
+        this.logger.error(
+            `Failed job process`, err.message,
+        );
+    }
+
+    @OnQueueError()
+    onError (error: Error) {
+        this.logger.error(
+            `Error with job process`, error.name, error.message,
+        );
+    }
 }

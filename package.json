@@ -28,6 +28,7 @@
     "@nestjs/typeorm": "^9.0.1",
     "bull": "^4.9.0",
     "class-validator": "^0.13.2",
+    "docker-compose": "^0.23.17",
     "dotenv": "^16.0.2",
     "hosted-git-info": "^5.1.0",
     "mysql2": "^2.3.3",

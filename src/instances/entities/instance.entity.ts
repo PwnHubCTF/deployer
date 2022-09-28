@@ -17,5 +17,11 @@ export class Instance extends CustomBaseEntity {
 
     @Column()
     githubUrl: string
+
+    @Column()
+    challengeId: string
+
+    @Column()
+    composeProjectName: string
 }
 

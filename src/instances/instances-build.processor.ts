@@ -29,7 +29,9 @@ export class InstancesBuildProcessor {
                 githubUrl: job.data.githubUrl,
                 owner: job.data.owner,
                 team: job.data.team,
-                port: result.port
+                port: result.port,
+                composeProjectName: result.composeProjectName,
+                challengeId: result.challengeId,
             }).save()
         } catch (error) {
             this.logger.error(`Error while create new instance in DB ${error.name} -> ${error.message}`);
