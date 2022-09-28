@@ -14,11 +14,11 @@ import { InstancesDestroyProcessor } from './instances-destroy.processor';
     TypeOrmModule.forFeature([Instance]),
     BullModule.registerQueue({
       name: 'build',
-      processors: [join(__dirname, 'build-processor.js')],
+      processors: [join(__dirname, '../processors/build-processor.js')],
     }),
     BullModule.registerQueue({
       name: 'destroy',
-      processors: [join(__dirname, 'destroy-processor.js')],
+      processors: [join(__dirname, '../processors/destroy-processor.js')],
     })
   ],
   controllers: [InstancesController],
