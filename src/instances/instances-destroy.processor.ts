@@ -19,7 +19,7 @@ export class InstancesDestroyProcessor {
         this.logger.debug(`Job ${job.id} finished ! ${JSON.stringify(result)}`);
 
         await this.instanceRepository.delete({
-            owner: job.data.owner
+            composeProjectName: job.data.projectName
         })
     }
 
