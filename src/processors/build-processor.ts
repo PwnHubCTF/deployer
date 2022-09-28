@@ -3,8 +3,9 @@ import { Logger } from '@nestjs/common';
 import { exec } from 'child_process';
 import { mkdir } from 'fs/promises';
 import { fromUrl } from "hosted-git-info"
-import { dirname } from 'path';
-import { simpleGit, CleanOptions, SimpleGit } from 'simple-git';
+import { simpleGit, SimpleGit } from 'simple-git';
+import { parse } from 'yaml'
+var fs = require('fs');
 
 require('dotenv').config()
 
@@ -21,31 +22,22 @@ export default async function (job: Job, cb: DoneCallback) {
  */
   logger.debug(`[${process.pid}] ${JSON.stringify(job.data)}`);
 
-  // Get git infos from Github Url
-  let infos = getInfosfromUrl(job.data.githubUrl)
-  console.log(infos);
+  // Download the project from github
+  job.progress('cloning')
+  const projectPath = await getFromGithub(job)
+
+  // Parse config file
+  if (!fs.existsSync(`${projectPath}/config.yaml`)) throw new Error("config.yaml not found in project")
+
+  const configFile = parse(fs.readFileSync(`${projectPath}/config.yaml`, 'utf8'))
+  console.log(configFile);
+
+  // Parse config
+
+  // Build docker
+  job.progress('building')
 
 
-  // Path where the project will be cloned
-  let path = `${__dirname}/../cloned_repositories/${infos.user}`
-  // Create directory for the project
-  let res = await mkdir(path, { recursive: true })
-  // Setup github module from infos
-  const git: SimpleGit = simpleGit(path, { config: [`Authorization: token ${process.env.GITHUB_TOKEN}`] });
-
-  // Clone project
-  git.clone(infos.url)
-
-
-
-  // // Clone the challenge, if not already cloned
-
-  // console.log(path);
-  // // let res = await mkdir(path, { recursive: true })
-  // await systemGitPartialClone(path, infos.url)
-
-  // console.log('Checkout folder', path);
-  // let cc = await systemGitCheckoutFolder(path, path)
 
   cb(new Error('test'))
   // Return the port of the deployed challenge
@@ -84,10 +76,13 @@ interface GithubInfos {
 
 function getInfosfromUrl (url): GithubInfos {
   let infos = fromUrl(url)
+  if (!infos.treepath) throw new Error('Invalid project path')
+  if (!infos.committish) throw new Error('Invalid project path')
   // Get the challenge path, from Github Url. ex: prog/nop
   let projectPath = url.split('/')
   infos.projectPath = projectPath.slice(projectPath.indexOf(infos.committish) + 1).join('/')
   infos.url = projectPath.slice(0, projectPath.indexOf(infos.committish) - 1).join('/')
+
   return infos
 }
 
@@ -206,4 +201,40 @@ function customExec (cmd, cwd?) {
 function systemGetDockerProject (projectName) {
   const cmd = `docker container ls --filter label="com.docker.compose.project=${projectName}"`
   return customExec(cmd)
+}
+
+async function getFromGithub (job: Job) {
+  // Get git infos from Github Url
+  let infos = getInfosfromUrl(job.data.githubUrl)
+
+  // Path where the project will be cloned
+  let path = `${__dirname}/../cloned_repositories/${infos.user}/${infos.projectPath.split('/').join('-')}`
+
+  // Create directory for the project
+  let res = await mkdir(path, { recursive: true })
+
+  // Setup github module from infos
+  const git: SimpleGit = simpleGit(path, { config: ['core.sparsecheckout=true'] });
+
+
+  // If res, a dir has been created -> project doesn't exists and need to be setup
+  if (res) {
+    // Set remote
+    job.progress('cloning.init')
+    await git.init()
+    await git.addRemote('origin', `https://${process.env.GITHUB_TOKEN}@${infos.url.slice(8)}.git`)
+  } else {
+    job.progress('cloning.fetch')
+    // Else, just fetch the repo to update it
+    await git.fetch()
+  }
+
+  // Sparse checkout -> clone only the folder we need
+  await customExec(`echo ${infos.projectPath}/ > ${path}/.git/info/sparse-checkout`)
+
+  // Pull project
+  job.progress('cloning.pull')
+  await git.pull('origin', infos.committish)
+
+  return `${path}/${infos.projectPath}`
 }

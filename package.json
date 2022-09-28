@@ -37,7 +37,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
     "simple-git": "^3.14.1",
-    "typeorm": "^0.3.10"
+    "typeorm": "^0.3.10",
+    "yaml": "^2.1.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
