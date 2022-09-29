@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { DeployInstanceDto } from './dto/deploy-instance.dto';
@@ -31,15 +31,15 @@ export class InstancesService {
 
     async destroyInstance (owner: string) {
         let instance = await this.instanceRepository.findOne({ where: { owner: owner } })
-        if (!instance) return { "status": "error", "message": "Instance undefined" }
+        if (!instance) throw new HttpException("Instance undefined", 404)
 
         let activeJobs = await this.destroyQueue.getJobs(['active'])
         let activeJobsCount = activeJobs.filter(j => j.data.owner === owner).length
-        if (activeJobsCount >= 1) return { "status": "error", "message": "An instance is already being destroyed. Please wait few minutes" }
+        if (activeJobsCount >= 1) throw new HttpException("An instance is already being destroyed. Please wait few minutes", 403)
 
         let waitingJobs = await this.destroyQueue.getJobs(['waiting'])
         let waitingJobsCount = waitingJobs.filter(j => j.data.owner === owner).length
-        if (waitingJobsCount >= 1) return { "status": "error", "message": "An instance is already being destroyed. Please wait few minutes (in queue)" }
+        if (waitingJobsCount >= 1) throw new HttpException('An instance is already being destroyed. Please wait few minutes (in queue)', 403)
 
         // destroy task
         await this.destroyQueue.add({
@@ -51,15 +51,16 @@ export class InstancesService {
     async createInstance (payload: DeployInstanceDto) {
 
         let currentInstances = await this.instanceRepository.find({ where: { owner: payload.owner } })
-        if (currentInstances.length >= 1) return { "status": "error", "message": "You already have an instance deployed" }
+        if (currentInstances.length >= 1) throw new HttpException("You already have an instance deployed", 403)
 
         let activeJobs = await this.buildQueue.getJobs(['active'])
         let activeJobsCount = activeJobs.filter(j => j.data.owner === payload.owner).length
-        if (activeJobsCount >= 1) return { "status": "error", "message": "You already have an instance in build" }
+        if (activeJobsCount >= 1) throw new HttpException("You already have an instance in build", 403)
+
 
         let waitingJobs = await this.buildQueue.getJobs(['waiting'])
         let waitingJobsCount = waitingJobs.filter(j => j.data.owner === payload.owner).length
-        if (waitingJobsCount >= 1) return { "status": "error", "message": "You already have a build in queue" }
+        if (waitingJobsCount >= 1) throw new HttpException("You already have a build in queue", 403)
 
         await this.buildQueue.add({
             owner: payload.owner,

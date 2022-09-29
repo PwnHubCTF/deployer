@@ -33,13 +33,13 @@ Most important route is
 `POST /instance`
 
 Body:
-
+```json
 {
   "githubUrl": "string",
   "owner": "string",
   "team": "string"
 }
-
+```
 githubUrl must point to a folder, containing the project.
 ex: https://github.com/USER/REPO/tree/main/prog/basicChall
 
@@ -47,5 +47,17 @@ ex: https://github.com/USER/REPO/tree/main/prog/basicChall
 The folder need to have a config.yaml file, with at least an ID for the project
 
 ```yaml
-id: prog-nop
+id: prog-my_chall
+```
+
+And a docker-compose.yml file, with only ONE binded random port
+
+```yaml
+version: "3.3"
+services:
+  mychall:
+    build:
+      context: .
+    ports:
+      - ":7000"
 ```
