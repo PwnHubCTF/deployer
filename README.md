@@ -43,8 +43,6 @@ And a docker-compose.yml file, with only ONE binded random port
 version: "3.3"
 services:
   mychall:
-    build:
-      context: .
     ports:
-      - ":7000"
+      - "7000"
 ```
