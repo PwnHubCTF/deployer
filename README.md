@@ -2,8 +2,8 @@
 ### From source, with docker for Redis and MySQL
 
 - You need docker & docker-compose
-- Run `docker-compose up -d `, to create a redis and a mysql docker
-- Then, copy and paste .env.example, to create a .env file `cp .env.example .env`
+- Copy and paste .env.example, to create a .env file `cp .env.example .env`
+- Then, run `docker-compose up -d `, to create a redis and a mysql docker
 - Populate env file
   - GITHUB_TOKEN is needed in order to pull private repositories
 - Install dependencies `npm install`
