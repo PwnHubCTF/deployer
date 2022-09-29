@@ -13,12 +13,12 @@ export class InstancesBuildProcessor {
         @InjectRepository(Instance)
         private readonly instanceRepository: Repository<Instance>) { }
 
-    // @OnQueueProgress()
-    // onProgress (job: Job, progress: number) {
-    //     console.log(
-    //         `Progress of job ${job.id} of type ${job.name}: ${progress}`
-    //     );
-    // }
+    @OnQueueProgress()
+    onProgress (job: Job, progress: number) {
+        console.log(
+            `Progress of job ${job.id} of type ${job.name}: ${progress}`
+        );
+    }
 
     @OnQueueCompleted()
     async onComplete (job: Job, result: any) {

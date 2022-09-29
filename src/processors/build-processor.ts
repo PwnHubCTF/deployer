@@ -47,9 +47,13 @@ export default async function (job: Job, cb: DoneCallback) {
   job.progress('building')
   const projectName = `${configFile.id}_${job.data.owner}`
 
-  await compose.upAll({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
-  const res = await compose.ps({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
-  const openedPort = res.out.substring(res.out.indexOf('0.0.0.0:') + '0.0.0.0:'.length, res.out.indexOf('->'))
+  try {
+      job.progress('building.upAll')
+      await compose.upAll({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
+      job.progress('building.getContainers')
+      const res = await compose.ps({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
+      const openedPort = res.out.substring(res.out.indexOf('0.0.0.0:') + '0.0.0.0:'.length, res.out.indexOf('->'))
+  
 
   // Return the port of the deployed challenge
   cb(null, {
@@ -57,6 +61,9 @@ export default async function (job: Job, cb: DoneCallback) {
     challengeId: configFile.id,
     composeProjectName: projectName
   });
+} catch (error) {
+  console.log(error);
+}
 }
 
 interface GithubInfos {
@@ -111,7 +118,7 @@ async function getFromGithub (job: Job) {
 
   // Setup github module from infos
   const git: SimpleGit = simpleGit(path, { config: ['core.sparsecheckout=true'] });
-
+ 
 
   // If res, a dir has been created -> project doesn't exists and need to be setup
   if (res) {

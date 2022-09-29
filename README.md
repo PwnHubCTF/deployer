@@ -14,6 +14,8 @@ If you have docker, you can simply do:
 
 `docker run -d -p 6379:6379`
 
+You need a DB, you can deploy a mysql docker for this
+
 Then, copy and paste .env.example, to create a .env file
 
 `cp .env.example .env`
