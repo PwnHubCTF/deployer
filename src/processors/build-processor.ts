@@ -125,7 +125,11 @@ async function getFromGithub (job: Job) {
     // Set remote
     job.progress('cloning.init')
     await git.init()
-    await git.addRemote('origin', `https://${process.env.GITHUB_TOKEN}@${infos.url.slice(8)}.git`)
+    let url = `https://${infos.url.slice(8)}.git`
+    if(process.env.GITHUB_TOKEN){
+      url=`https://${process.env.GITHUB_TOKEN}@${infos.url.slice(8)}.git`
+    }
+    await git.addRemote('origin', url)
   } else {
     job.progress('cloning.fetch')
     // Else, just fetch the repo to update it

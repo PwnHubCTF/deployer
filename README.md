@@ -1,32 +1,17 @@
 ## Installation
+### From source, with docker for Redis and MySQL
 
-### With docker
-
-You need docker compose
-
-`docker-compose up -d`
-
-### From source
-
-You need to install redis first.
-
-If you have docker, you can simply do:
-
-`docker run -d -p 6379:6379`
-
-You need a DB, you can deploy a mysql docker for this
-
-Then, copy and paste .env.example, to create a .env file
-
-`cp .env.example .env`
-
-You can now start NestJS app
-
-`npm install`
-
-`npm run start:dev`
+- You need docker & docker-compose
+- Run `docker-compose up -d `, to create a redis and a mysql docker
+- Then, copy and paste .env.example, to create a .env file `cp .env.example .env`
+- Populate env file
+  - GITHUB_TOKEN is needed in order to pull private repositories
+- Install dependencies `npm install`
+- You can now start NestJS app `npm run start:dev`
 
 # Usage
+
+In dev mode, you can go to `http://localhost:3000/api` to test API routes
 
 This project is an API to deploy a docker compose stack, from a github URL
 

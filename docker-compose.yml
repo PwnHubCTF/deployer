@@ -1,41 +1,35 @@
 services:
-  api:
-    build:
-      dockerfile: Dockerfile
-      context: .
-      # Only will build development stage from our dockerfile
-      target: development
-    env_file:
-        - .env
-    volumes:
-      - .:/usr/src/app
-    # Run in dev Mode: npm run start:dev
-    command: npm run start:dev
-    ports:
-      - 3000:3000
-    depends_on:
-      - redis
-      - postgres
+  # api:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: .
+  #     # Only will build development stage from our dockerfile
+  #     target: development
+  #   env_file:
+  #       - .env
+  #   volumes:
+  #     - .:/usr/src/app
+  #   # Run in dev Mode: npm run start:dev
+  #   command: npm run start:dev
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - redis
+  #     - postgres
 
   redis: # Name of container
     image: redis
-    expose:
-      - 6379
-    volumes: 
-      - redis:/data
+    ports:
+      - '6379:6379'
   
   bdd:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    expose:
-      - 3306
+    ports:
+      - '3306:3306'
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}
-
-volumes:
-  redis:
-    driver: local
