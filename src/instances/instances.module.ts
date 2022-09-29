@@ -15,11 +15,10 @@ import { InstancesDestroyProcessor } from './instances-destroy.processor';
     BullModule.registerQueue({
       name: 'build',
       processors: [join(__dirname, '../processors/build-processor.js')],
-    }),
-    BullModule.registerQueue({
+    }, {
       name: 'destroy',
       processors: [join(__dirname, '../processors/destroy-processor.js')],
-    })
+    }),
   ],
   controllers: [InstancesController],
   providers: [InstancesService, InstancesBuildProcessor, InstancesDestroyProcessor]

@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 async function bootstrap () {
   const app = await NestFactory.create(AppModule);
 
-  if (process.env.NODE_ENV !== 'prod') {
+  if (process.env.NODE_ENV === 'dev') {
     const config = new DocumentBuilder()
       .addApiKey({ type: 'apiKey', name: 'X-API-KEY', in: 'header', description: 'API Key For External calls' }, 'X-API-KEY')
       .setTitle('Deployer API')

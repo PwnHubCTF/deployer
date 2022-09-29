@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getInstances () {
-    return false;
+  getAppStatus () {
+    return 'up';
   }
 }

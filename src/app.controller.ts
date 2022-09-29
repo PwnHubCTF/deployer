@@ -9,6 +9,6 @@ export class AppController {
 
   @Get()
   testApi () {
-    return "up!"
+    return { "status": this.appService.getAppStatus() }
   }
 }
