@@ -14,9 +14,19 @@ export class InstancesController {
         return await this.instanceService.getInstances();
     }
 
+    @Get('/challenge/:challenge_id')
+    async getInstancesFromChallengeId (@Param('challenge_id') id: string) {
+        return await this.instanceService.getInstancesFromChallengeId(id);
+    }
+
     @Get('/team/:team_id')
-    async getInstancesByTeam (@Param('team_id') id: string) {
-        return await this.instanceService.getInstancesByTeam(id);
+    async getInstancesFromTeam (@Param('team_id') id: string) {
+        return await this.instanceService.getInstancesFromTeam(id);
+    }
+
+    @Get('/owner/:owner_id')
+    async getInstanceFromOwner (@Param('owner_id') id: string) {
+        return await this.instanceService.getInstancesFromOwner(id);
     }
 
     @Post()

@@ -8,6 +8,7 @@ import { Instance } from './entities/instance.entity';
 
 @Injectable()
 export class InstancesService {
+
     constructor(@InjectQueue('destroy') private destroyQueue: Queue, @InjectQueue('build') private buildQueue: Queue, @InjectRepository(Instance)
     private readonly instanceRepository: Repository<Instance>) { }
 
@@ -16,8 +17,16 @@ export class InstancesService {
         return await this.instanceRepository.find()
     }
 
-    async getInstancesByTeam (id: string) {
+    async getInstancesFromChallengeId (id: string) {
+        return await this.instanceRepository.find({ where: { challengeId: id } })
+    }
+
+    async getInstancesFromTeam (id: string) {
         return await this.instanceRepository.find({ where: { team: id } })
+    }
+
+    async getInstancesFromOwner (id: string) {
+        return await this.instanceRepository.findOne({ where: { owner: id } })
     }
 
     async destroyInstance (owner: string) {

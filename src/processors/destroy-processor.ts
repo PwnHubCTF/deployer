@@ -22,7 +22,7 @@ export default async function (job: Job, cb: DoneCallback) {
 }
 
 async function removeDockerProject (projectName) {
-  const ids = (await customExec(`docker ps --filter label="com.docker.compose.project=${projectName}" -q`)).split('\n').filter(c => c != '')
+  const ids = (await customExec(`docker ps -a --filter label="com.docker.compose.project=${projectName}" -q`)).split('\n').filter(c => c != '')
 
   for (const id of ids) {
     const cmd = `docker rm -f ${id}`

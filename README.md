@@ -12,7 +12,7 @@ You need to install redis first.
 
 If you have docker, you can simply do:
 
-`docker run -d -p 6379:6379 --name myredis`
+`docker run -d -p 6379:6379`
 
 Then, copy and paste .env.example, to create a .env file
 
@@ -23,3 +23,29 @@ You can now start NestJS app
 `npm install`
 
 `npm run start:dev`
+
+# Usage
+
+This project is an API to deploy a docker compose stack, from a github URL
+
+Most important route is
+
+`POST /instance`
+
+Body:
+
+{
+  "githubUrl": "string",
+  "owner": "string",
+  "team": "string"
+}
+
+githubUrl must point to a folder, containing the project.
+ex: https://github.com/USER/REPO/tree/main/prog/basicChall
+
+
+The folder need to have a config.yaml file, with at least an ID for the project
+
+```yaml
+id: prog-nop
+```
