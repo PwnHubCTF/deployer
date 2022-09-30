@@ -45,7 +45,7 @@ export default async function (job: Job, cb: DoneCallback) {
 
   // Build docker
   job.progress('building')
-  const projectName = `${configFile.id}_${job.data.owner}`
+  const projectName = `${configFile.id}_${job.data.owner}`.toLowerCase()
 
   try {
       job.progress('building.upAll')
