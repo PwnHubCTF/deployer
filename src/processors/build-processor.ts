@@ -33,7 +33,9 @@ export default async function (job: Job, cb: DoneCallback) {
   if (!fs.existsSync(`${projectPath}/docker-compose.yml`)) throw new Error("docker-compose.yml not found in project")
 
   const configFile = parse(fs.readFileSync(`${projectPath}/config.yaml`, 'utf8'))
-  // console.log(configFile);
+  
+  let id = configFile.id
+  if(job.data.challengeId) id = job.data.challengeId
 
   /**
    * configFile:
@@ -45,7 +47,7 @@ export default async function (job: Job, cb: DoneCallback) {
 
   // Build docker
   job.progress('building')
-  const projectName = `${configFile.id}_${job.data.owner}`.toLowerCase()
+  const projectName = `${id}_${job.data.owner}`.toLowerCase()
 
   try {
       job.progress('building.upAll')
@@ -58,7 +60,7 @@ export default async function (job: Job, cb: DoneCallback) {
   // Return the port of the deployed challenge
   cb(null, {
     port: openedPort,
-    challengeId: configFile.id,
+    challengeId: id,
     composeProjectName: projectName
   });
 } catch (error) {

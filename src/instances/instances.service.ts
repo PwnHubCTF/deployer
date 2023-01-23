@@ -65,7 +65,8 @@ export class InstancesService {
         await this.buildQueue.add({
             owner: payload.owner,
             team: payload.team,
-            githubUrl: payload.githubUrl
+            githubUrl: payload.githubUrl,
+            challengeId: payload.challengeId,
         })
         return { "status": "Enqueued" }
     }

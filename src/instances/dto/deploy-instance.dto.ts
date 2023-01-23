@@ -20,4 +20,12 @@ export class DeployInstanceDto {
     })
     @IsNotEmpty()
     team: string;
+
+    @ApiProperty({
+        required: false
+    })
+    @IsNotEmpty()
+    challengeId: string;
+
+    
 }
