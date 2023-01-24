@@ -34,7 +34,7 @@ export class InstancesService {
        const inBuild = await this.buildQueue.getJobs(['active', 'waiting'])
        const inDestroy = await this.destroyQueue.getJobs(['active', 'waiting'])
        
-       return [...instances, ...[...inBuild, ...inDestroy].map(j => {return {...j.data, progress: j.progress()}})]
+       return [...instances.map(i => {return {...i, url: `${process.env.SERVER_URL}:${i.port}`}}), ...[...inBuild, ...inDestroy].map(j => {return {...j.data, progress: j.progress()}})]
     }
 
     async destroyInstance (owner: string) {
