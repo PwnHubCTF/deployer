@@ -7,8 +7,6 @@ services:
       context: .
     env_file:
         - .env
-    volumes:
-      - .:/usr/src/app
     ports:
       - 4000:3000
     depends_on:
@@ -17,6 +15,7 @@ services:
     networks:
       - internalapp 
       - default
+    command: npm run start
 
   redis: # Name of container
     image: redis
