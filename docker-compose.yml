@@ -15,7 +15,6 @@ services:
     networks:
       - internalapp 
       - default
-    command: tail -f /etc/passwd
 
   redis: # Name of container
     image: redis
