@@ -15,6 +15,7 @@ services:
     networks:
       - internalapp 
       - default
+    command: npm run start:prod
 
   redis: # Name of container
     image: redis

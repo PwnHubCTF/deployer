@@ -11,5 +11,3 @@ RUN npm i
 RUN npm run build
 
 USER node
-
-RUN npm run start:prod
