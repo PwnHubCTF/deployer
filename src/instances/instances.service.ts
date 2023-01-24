@@ -14,19 +14,27 @@ export class InstancesService {
 
 
     async getInstances () {
-        return await this.instanceRepository.find()
+        return await this.getInstancesAndQueues()
     }
 
     async getInstancesFromChallengeId (id: string) {
-        return await this.instanceRepository.find({ where: { challengeId: id } })
-    }
+        return await this.getInstancesAndQueues({ challengeId: id })
+}
 
     async getInstancesFromTeam (id: string) {
-        return await this.instanceRepository.find({ where: { team: id } })
+        return await this.getInstancesAndQueues({ team: id })
     }
 
     async getInstancesFromOwner (id: string) {
-        return await this.instanceRepository.findOne({ where: { owner: id } })
+        return await this.getInstancesAndQueues({ owner: id })
+    }
+
+    async getInstancesAndQueues(search?){
+       const instances = await this.instanceRepository.find({ where: search })
+       const inBuild = await this.buildQueue.getJobs(['active', 'waiting'])
+       const inDestroy = await this.destroyQueue.getJobs(['active', 'waiting'])
+       
+       return [...instances, ...[...inBuild, ...inDestroy].map(j => {return {...j.data, progress: j.progress()}})]
     }
 
     async destroyInstance (owner: string) {
