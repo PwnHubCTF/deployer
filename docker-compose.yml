@@ -15,7 +15,7 @@ services:
     networks:
       - internalapp 
       - default
-    command: npm run start
+    command: tail -f /etc/passwd
 
   redis: # Name of container
     image: redis
