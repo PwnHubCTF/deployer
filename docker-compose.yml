@@ -15,7 +15,7 @@ services:
       - bdd
     networks:
       - internalapp 
-      - server_default
+      - default
     # privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -30,7 +30,6 @@ services:
     #   - '6379:6379'
     networks:
       - internalapp
-      - server_default
   
   bdd:
     image: mysql
@@ -51,5 +50,3 @@ services:
 networks:
   internalapp:
     internal: true
-  server_default:
-    external: true
