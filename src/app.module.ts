@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { BullModule } from '@nestjs/bull';
 import { InstancesModule } from './instances/instances.module';
+import { InstanceSingleModule } from './instance-single/instance-single.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { InstancesModule } from './instances/instances.module';
       url: process.env.REDIS_URL
     }),
     AuthModule,
-    InstancesModule],
+    InstancesModule,
+    InstanceSingleModule],
   controllers: [AppController],
   providers: [AppService],
 })
