@@ -3,17 +3,16 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from 'bull';
 import { Repository } from 'typeorm';
-import { InstanceMultiple } from './entities/instance-multiple.entity';
+import { InstanceSingle } from './entities/instance-single.entity';
 
-@Processor('build')
-export class InstancesBuildProcessor {
+@Processor('build-admin')
+export class InstancesSingleBuildProcessor {
+
     protected readonly logger = new Logger('InstancesBuildProcessor');
 
     constructor(
-        @InjectRepository(InstanceMultiple)
-        private readonly instanceRepository: Repository<InstanceMultiple>) {
-
-    }
+        @InjectRepository(InstanceSingle)
+        private readonly instanceRepository: Repository<InstanceSingle>) {  }
 
     @OnQueueCompleted()
     async onComplete (job: Job, result: any) {
@@ -22,8 +21,6 @@ export class InstancesBuildProcessor {
         try {
             await this.instanceRepository.create({
                 githubUrl: job.data.githubUrl,
-                owner: job.data.owner,
-                team: job.data.team,
                 port: result.port,
                 composeProjectName: result.composeProjectName,
                 challengeId: job.data.challengeId,
@@ -32,7 +29,7 @@ export class InstancesBuildProcessor {
             this.logger.error(`Error while create new instance in DB ${error.name} -> ${error.message}`);
         }
     }
-    
+
     @OnQueueProgress()
     onProgress (job: Job, progress: number) {
         // console.log(

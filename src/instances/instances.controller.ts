@@ -15,9 +15,19 @@ export class InstancesController {
         return await this.instanceService.getInstances();
     }
 
-    @Get('/challenge/:challenge_id')
+    @Get('admin')
+    async getAdminInstances () {
+        return await this.instanceService.getAdminInstances();
+    }
+
+    @Get('challenge/:challenge_id')
     async getInstancesFromChallengeId (@Param('challenge_id') id: string) {
         return await this.instanceService.getInstancesFromChallengeId(id);
+    }
+
+    @Get('admin/challenge/:challenge_id')
+    async getAdminInstancesFromChallengeId (@Param('challenge_id') id: string) {
+        return await this.instanceService.getAdminInstancesFromChallengeId(id);
     }
 
     @Get('/team/:team_id')
@@ -38,6 +48,11 @@ export class InstancesController {
     @Post('/admin')
     async deployAdminInstance (@Body() payload: DeployAdminInstanceDto) {
         return await this.instanceService.createAdminInstance(payload);
+    }
+
+    @Delete('admin/:id')
+    async destroyAdminInstance (@Param('id') id: string) {
+        return await this.instanceService.destroyAdminInstance(id);
     }
 
     @Delete('/:id')

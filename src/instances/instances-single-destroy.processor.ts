@@ -3,15 +3,15 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from 'bull';
 import { Repository } from 'typeorm';
-import { InstanceMultiple } from './entities/instance-multiple.entity';
+import { InstanceSingle } from './entities/instance-single.entity';
 
-@Processor('destroy')
-export class InstancesDestroyProcessor {
-    private readonly logger = new Logger(InstancesDestroyProcessor.name);
+@Processor('destroy-admin')
+export class InstancesSingleDestroyProcessor {
+    private readonly logger = new Logger(InstancesSingleDestroyProcessor.name);
 
     constructor(
-        @InjectRepository(InstanceMultiple)
-        private readonly instanceRepository: Repository<InstanceMultiple>) { }
+        @InjectRepository(InstanceSingle)
+        private readonly instanceRepository: Repository<InstanceSingle>) { }
 
 
     @OnQueueCompleted()
