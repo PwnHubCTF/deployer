@@ -42,12 +42,6 @@ ex: https://github.com/USER/REPO/tree/main/prog/basicChall
 
 # Challenge folder configuration
 
-The folder need to have a config.yaml file, with at least an ID for the project
-
-```yaml
-id: prog-my_chall
-```
-
 And a docker-compose.yml file for your challenge, with only *ONE* binded random port
 
 ```yaml

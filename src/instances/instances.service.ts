@@ -4,13 +4,19 @@ import { InjectQueue } from '@nestjs/bull';
 import { DeployInstanceDto } from './dto/deploy-instance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Instance } from './entities/instance.entity';
+import { DeployAdminInstanceDto } from './dto/deploy-admin-instance.dto';
+import { InstanceMultiple } from './entities/instance-multiple.entity';
+import { InstanceSingle } from './entities/instance-single.entity';
 
 @Injectable()
 export class InstancesService {
 
-    constructor(@InjectQueue('destroy') private destroyQueue: Queue, @InjectQueue('build') private buildQueue: Queue, @InjectRepository(Instance)
-    private readonly instanceRepository: Repository<Instance>) { }
+    constructor(
+        @InjectQueue('destroy') private destroyQueue: Queue,
+        @InjectQueue('build') private buildQueue: Queue,
+        @InjectRepository(InstanceMultiple) private readonly instanceRepository: Repository<InstanceMultiple>,
+        @InjectRepository(InstanceSingle) private readonly instanceSingleRepository: Repository<InstanceSingle>
+    ) { }
 
 
     async getInstances () {
@@ -19,7 +25,7 @@ export class InstancesService {
 
     async getInstancesFromChallengeId (id: string) {
         return await this.getInstancesAndQueues({ challengeId: id })
-}
+    }
 
     async getInstancesFromTeam (id: string) {
         return await this.getInstancesAndQueues({ team: id })
@@ -29,24 +35,24 @@ export class InstancesService {
         return await this.getInstancesAndQueues({ owner: id })
     }
 
-    async getInstancesAndQueues(search?){
-       const instances = await this.instanceRepository.find({ where: search })
-       const inBuild = await this.buildQueue.getJobs(['active', 'waiting'])
-       const inDestroy = await this.destroyQueue.getJobs(['active', 'waiting'])
-       
-       return [...instances.map(i => {return {...i, url: `${process.env.SERVER_URL}:${i.port}`}}), ...[...inBuild, ...inDestroy].map(j => {return {...j.data, progress: j.progress()}})]
+    async getInstancesAndQueues (search?) {
+        const instances = await this.instanceRepository.find({ where: search })
+        const inBuild = await this.buildQueue.getJobs(['active', 'waiting'])
+        const inDestroy = await this.destroyQueue.getJobs(['active', 'waiting'])
+
+        return [...instances.map(i => { return { ...i, url: `${process.env.SERVER_URL}:${i.port}` } }), ...[...inBuild, ...inDestroy].map(j => { return { ...j.data, progress: j.progress() } })]
     }
 
-    async destroyInstance (owner: string) {
-        let instance = await this.instanceRepository.findOne({ where: { owner: owner } })
+    async destroyInstance (id: string) {
+        let instance = await this.instanceRepository.findOne({ where: { id } })
         if (!instance) throw new HttpException("Instance undefined", 404)
 
         let activeJobs = await this.destroyQueue.getJobs(['active'])
-        let activeJobsCount = activeJobs.filter(j => j.data.owner === owner).length
+        let activeJobsCount = activeJobs.filter(j => j.data.owner === instance.owner).length
         if (activeJobsCount >= 1) throw new HttpException("An instance is already being destroyed. Please wait few minutes", 403)
 
         let waitingJobs = await this.destroyQueue.getJobs(['waiting'])
-        let waitingJobsCount = waitingJobs.filter(j => j.data.owner === owner).length
+        let waitingJobsCount = waitingJobs.filter(j => j.data.owner === instance.owner).length
         if (waitingJobsCount >= 1) throw new HttpException('An instance is already being destroyed. Please wait few minutes (in queue)', 403)
 
         // destroy task
@@ -73,6 +79,15 @@ export class InstancesService {
         await this.buildQueue.add({
             owner: payload.owner,
             team: payload.team,
+            githubUrl: payload.githubUrl,
+            challengeId: payload.challengeId,
+        })
+        return { "status": "Enqueued" }
+    }
+
+    async createAdminInstance (payload: DeployAdminInstanceDto) {
+
+        await this.buildQueue.add({
             githubUrl: payload.githubUrl,
             challengeId: payload.challengeId,
         })

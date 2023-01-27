@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { DeployAdminInstanceDto } from './dto/deploy-admin-instance.dto';
 import { DeployInstanceDto } from './dto/deploy-instance.dto';
 import { InstancesService } from './instances.service';
 
@@ -34,8 +35,13 @@ export class InstancesController {
         return await this.instanceService.createInstance(payload);
     }
 
-    @Delete('/:owner_id')
-    async destroyInstance (@Param('owner_id') owner: string) {
-        return await this.instanceService.destroyInstance(owner);
+    @Post('/admin')
+    async deployAdminInstance (@Body() payload: DeployAdminInstanceDto) {
+        return await this.instanceService.createAdminInstance(payload);
+    }
+
+    @Delete('/:id')
+    async destroyInstance (@Param('id') id: string) {
+        return await this.instanceService.destroyInstance(id);
     }
 }
