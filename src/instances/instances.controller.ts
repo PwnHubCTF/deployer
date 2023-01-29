@@ -35,7 +35,13 @@ export class InstancesController {
         if(instance.length == 0){
             return { "status": "stopped" }
         } else {
-            return instance[0]
+            let infos = {
+                creation: instance[0].creation,
+                destroyAt: instance[0].destroyAt,
+                url: instance[0].url
+            }
+            
+            return infos
         }
     }
 
