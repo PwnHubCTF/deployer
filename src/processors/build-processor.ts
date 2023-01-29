@@ -43,8 +43,11 @@ export default async function (job: Job, cb: DoneCallback) {
 
   // Build docker
   job.progress('building')
-  const projectName = `${job.data.challengeId}_${job.data.owner}`.toLowerCase()
-
+  let projectName = `${job.data.challengeId}`.toLowerCase()
+  if(job.data.owner){
+    projectName = `${job.data.challengeId}_${job.data.owner}`.toLowerCase()
+  }
+  
   try {
       job.progress('building.upAll')
       await compose.upAll({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })

@@ -20,7 +20,7 @@ export class InstanceSingleService {
         return await this.getInstancesAndQueues()
     }
 
-    async getInstancesFromChallengeId (id: string) {
+    async getInstanceFromChallengeId (id: string) {
         return await this.getInstancesAndQueues({ challengeId: id })
     }
 
@@ -63,7 +63,6 @@ export class InstanceSingleService {
         if (jobsCount >= 1) throw new HttpException("This challenge is already being builded", 403)
 
         return await this.buildAdminQueue.add({
-            owner: 'single-instance',
             githubUrl: payload.githubUrl,
             challengeId: payload.challengeId,
         })

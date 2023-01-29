@@ -16,7 +16,12 @@ export class InstanceSingleController {
 
     @Get('challenge/:challenge_id')
     async getAdminInstancesFromChallengeId (@Param('challenge_id') id: string) {
-        return await this.instanceService.getInstancesFromChallengeId(id);
+        let instance = await this.instanceService.getInstanceFromChallengeId(id);
+        if(instance.length == 0){
+            return { "status": "stopped" }
+        } else {
+            return instance[0]
+        }
     }
 
     @Post('')

@@ -26,6 +26,10 @@ export class InstancesService {
         return await this.getInstancesAndQueues({ challengeId: id })
     }
 
+    async getInstanceFromOwnerAndChallenge (owner_id: string, challenge_id: string) {
+        return await this.getInstancesAndQueues({ challengeId: challenge_id, owner: owner_id })
+    }
+
     async getInstancesFromTeam (id: string) {
         return await this.getInstancesAndQueues({ team: id })
     }

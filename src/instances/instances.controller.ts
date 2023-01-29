@@ -29,6 +29,16 @@ export class InstancesController {
         return await this.instanceService.getInstancesFromOwner(id);
     }
 
+    @Get('/owner/:owner_id/:challenge_id')
+    async getInstanceFromOwnerAndChallenge (@Param('challenge_id') challenge_id: string, @Param('owner_id') owner_id: string) {
+        let instance = await this.instanceService.getInstanceFromOwnerAndChallenge(owner_id, challenge_id);
+        if(instance.length == 0){
+            return { "status": "stopped" }
+        } else {
+            return instance[0]
+        }
+    }
+
     @Post()
     async deployInstance (@Body() payload: DeployInstanceDto) {
         await this.instanceService.createInstance(payload);
