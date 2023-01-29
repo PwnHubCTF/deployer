@@ -38,7 +38,8 @@ export class InstancesController {
             let infos = {
                 creation: instance[0].creation,
                 destroyAt: instance[0].destroyAt,
-                url: instance[0].url
+                url: instance[0].url,
+                id: instance[0].id
             }
             
             return infos
