@@ -16,12 +16,6 @@ export class DeployInstanceDto {
     owner: string;
 
     @ApiProperty({
-        required: true
-    })
-    @IsNotEmpty()
-    team: string;
-
-    @ApiProperty({
         required: false
     })
     @IsNotEmpty()

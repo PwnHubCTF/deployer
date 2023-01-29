@@ -34,7 +34,6 @@ Body:
 {
   "githubUrl": "string",
   "owner": "string",
-  "team": "string"
 }
 ```
 githubUrl must point to a folder, containing the project.

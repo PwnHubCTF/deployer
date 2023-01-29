@@ -30,10 +30,6 @@ export class InstancesService {
         return await this.getInstancesAndQueues({ challengeId: challenge_id, owner: owner_id })
     }
 
-    async getInstancesFromTeam (id: string) {
-        return await this.getInstancesAndQueues({ team: id })
-    }
-
     async getInstancesFromOwner (id: string) {
         return await this.getInstancesAndQueues({ owner: id })
     }
@@ -72,7 +68,7 @@ export class InstancesService {
     }
 
     async createInstance (payload: DeployInstanceDto) {
-        if(!payload.challengeId || !payload.githubUrl || !payload.owner || !payload.team) throw new HttpException("Missing informations", 403)
+        if(!payload.challengeId || !payload.githubUrl || !payload.owner) throw new HttpException("Missing informations", 403)
 
         let currentInstances = await this.instanceRepository.find({ where: { owner: payload.owner } })
         if (currentInstances.length >= 1) throw new HttpException("You already have an instance deployed", 403)
@@ -88,7 +84,6 @@ export class InstancesService {
 
         return await this.buildQueue.add({
             owner: payload.owner,
-            team: payload.team,
             githubUrl: payload.githubUrl,
             challengeId: payload.challengeId,
         })
