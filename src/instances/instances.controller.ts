@@ -31,7 +31,8 @@ export class InstancesController {
 
     @Post()
     async deployInstance (@Body() payload: DeployInstanceDto) {
-        return await this.instanceService.createInstance(payload);
+        await this.instanceService.createInstance(payload);
+        return { "status": "Enqueued" }
     }
 
     @Delete('/:id')

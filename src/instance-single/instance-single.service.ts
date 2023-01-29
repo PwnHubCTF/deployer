@@ -53,6 +53,8 @@ export class InstanceSingleService {
     }
 
     async createAdminInstance (payload: DeployAdminInstanceDto) {
+        if(!payload.challengeId || !payload.githubUrl) throw new HttpException("Missing informations", 403)
+
         let currentInstances = await this.instanceSingleRepository.find({ where: { challengeId: payload.challengeId } })
         if (currentInstances.length >= 1) throw new HttpException("This challenge is already deployed", 403)
 
@@ -60,12 +62,11 @@ export class InstanceSingleService {
         let jobsCount = jobs.filter(j => j.data.challengeId === payload.challengeId).length
         if (jobsCount >= 1) throw new HttpException("This challenge is already being builded", 403)
 
-        await this.buildAdminQueue.add({
+        return await this.buildAdminQueue.add({
             owner: 'single-instance',
             githubUrl: payload.githubUrl,
             challengeId: payload.challengeId,
         })
-        return { "status": "Enqueued" }
     }
 }
 

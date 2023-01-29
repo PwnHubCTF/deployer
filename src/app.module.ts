@@ -7,6 +7,7 @@ import { AuthMiddleware } from './middleware/auth.middleware';
 import { BullModule } from '@nestjs/bull';
 import { InstancesModule } from './instances/instances.module';
 import { InstanceSingleModule } from './instance-single/instance-single.module';
+import { BuildEventsModule } from './gateways/build-events.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { InstanceSingleModule } from './instance-single/instance-single.module';
     }),
     AuthModule,
     InstancesModule,
-    InstanceSingleModule],
+    InstanceSingleModule,
+    BuildEventsModule],
   controllers: [AppController],
   providers: [AppService],
 })

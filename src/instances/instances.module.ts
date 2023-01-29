@@ -20,6 +20,7 @@ import { InstanceMultiple } from './entities/instance-multiple.entity';
       processors: [join(__dirname, '../processors/destroy-processor.js')],
     }),
   ],
+  exports: [InstancesService],
   controllers: [InstancesController],
   providers: [InstancesService, InstancesBuildProcessor, InstancesDestroyProcessor]
 })

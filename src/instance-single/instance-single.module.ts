@@ -20,6 +20,7 @@ import { InstancesSingleDestroyProcessor } from './instances-single-destroy.proc
       processors: [join(__dirname, '../processors/destroy-processor.js')],
     }),
   ],
+  exports: [InstanceSingleService],
   controllers: [InstanceSingleController],
   providers: [InstanceSingleService, InstancesSingleBuildProcessor, InstancesSingleDestroyProcessor]
 })

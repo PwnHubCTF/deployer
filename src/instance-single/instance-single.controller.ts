@@ -21,7 +21,8 @@ export class InstanceSingleController {
 
     @Post('')
     async deployAdminInstance (@Body() payload: DeployAdminInstanceDto) {
-        return await this.instanceService.createAdminInstance(payload);
+        await this.instanceService.createAdminInstance(payload);
+        return { "status": "Enqueued" }
     }
 
     @Delete('/:id')
