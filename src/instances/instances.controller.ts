@@ -27,17 +27,20 @@ export class InstancesController {
     @Get('/owner/:owner_id/:challenge_id')
     async getInstanceFromOwnerAndChallenge (@Param('challenge_id') challenge_id: string, @Param('owner_id') owner_id: string) {
         let instance = await this.instanceService.getInstanceFromOwnerAndChallenge(owner_id, challenge_id);
-        if(instance.length == 0){
+        if (instance.length == 0) {
             return { "status": "stopped" }
         } else {
-            let infos = {
-                creation: instance[0].creation,
-                destroyAt: instance[0].destroyAt,
-                url: instance[0].url,
-                id: instance[0].id
+            if (instance[0].url)
+                return {
+                    creation: instance[0].creation,
+                    destroyAt: instance[0].destroyAt,
+                    url: instance[0].url,
+                    id: instance[0].id
+                }
+
+            return {
+                progress: 'Building..'
             }
-            
-            return infos
         }
     }
 
