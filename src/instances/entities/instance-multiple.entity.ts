@@ -9,5 +9,8 @@ export class InstanceMultiple extends Instance {
 
     @Column({ unique: true })
     owner: string
+
+    @Column()
+    destroyAt: Date;
 }
 

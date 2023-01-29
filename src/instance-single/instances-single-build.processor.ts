@@ -32,8 +32,8 @@ export class InstancesSingleBuildProcessor {
 
     @OnQueueProgress()
     onProgress (job: Job, progress: number) {
-        // console.log(
-        //     `Progress of job ${job.id} of type ${job.name}: ${progress}`
+        // this.logger.debug(
+        //     `Progress of job ${job.id} of type ${job.name}: ${progress} / ${job.progress()}`
         // );
     }
 

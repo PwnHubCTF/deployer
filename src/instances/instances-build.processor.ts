@@ -27,6 +27,7 @@ export class InstancesBuildProcessor {
                 port: result.port,
                 composeProjectName: result.composeProjectName,
                 challengeId: job.data.challengeId,
+                destroyAt: new Date(Date.now() + 1000*60*30)
             }).save()
         } catch (error) {
             this.logger.error(`Error while create new instance in DB ${error.name} -> ${error.message}`);

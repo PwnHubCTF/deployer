@@ -3,8 +3,10 @@ import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { DeployInstanceDto } from './dto/deploy-instance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, LessThanOrEqual, Repository } from 'typeorm';
 import { InstanceMultiple } from './entities/instance-multiple.entity';
+import { Cron } from '@nestjs/schedule';
+import { CronExpression } from '@nestjs/schedule/dist';
 
 @Injectable()
 export class InstancesService {
@@ -81,6 +83,16 @@ export class InstancesService {
             githubUrl: payload.githubUrl,
             challengeId: payload.challengeId,
         })
+    }
+
+    @Cron(CronExpression.EVERY_30_SECONDS)
+    async cleanupInstances() {
+        const expireds = await this.instanceRepository.find({
+            where: {
+                destroyAt: LessThanOrEqual(new Date())
+            }
+        })
+        for(const i of expireds) this.destroyInstance(i.id)
     }
 }
 

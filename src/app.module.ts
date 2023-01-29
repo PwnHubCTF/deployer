@@ -8,6 +8,7 @@ import { BullModule } from '@nestjs/bull';
 import { InstancesModule } from './instances/instances.module';
 import { InstanceSingleModule } from './instance-single/instance-single.module';
 import { BuildEventsModule } from './gateways/build-events.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BuildEventsModule } from './gateways/build-events.module';
     BullModule.forRoot({
       url: process.env.REDIS_URL
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     InstancesModule,
     InstanceSingleModule,

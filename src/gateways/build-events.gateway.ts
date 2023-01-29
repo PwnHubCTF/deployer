@@ -38,7 +38,7 @@ export class BuildEventsGateway {
       const job = await this.instanceService.createInstance(data)
       while (!await job.isCompleted()) {
         await new Promise(r => setTimeout(r, 500));
-        socket.emit("progress", await job.progress())
+        socket.emit("progress", job.progress())
       }
       socket.emit("progress", 'completed')
     } catch (error) {
@@ -52,7 +52,7 @@ export class BuildEventsGateway {
       const job = await this.instanceSingleService.createAdminInstance(data)
       while (!await job.isCompleted()) {
         await new Promise(r => setTimeout(r, 500));
-        socket.emit("progress", await job.progress())
+        socket.emit("progress", job.progress())
       }
       socket.emit("progress", 'completed')
     } catch (error) {
