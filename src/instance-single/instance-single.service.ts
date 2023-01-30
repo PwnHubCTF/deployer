@@ -22,9 +22,9 @@ export class InstanceSingleService {
 
     async getInstanceFromChallengeId (id: string) {
         try {
-            return await this.getInstancesAndQueues({ challengeId: id })[0]
+            return await this.getInstancesAndQueues({ challengeId: id })
         } catch (error) {
-            return {'status': 'stopped'}
+            return [{'status': 'stopped'}]
         }
     }
 
