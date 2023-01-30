@@ -21,7 +21,11 @@ export class InstanceSingleService {
     }
 
     async getInstanceFromChallengeId (id: string) {
-        return await this.getInstancesAndQueues({ challengeId: id })
+        try {
+            return await this.getInstancesAndQueues({ challengeId: id })[0]
+        } catch (error) {
+            return {'status': 'stopped'}
+        }
     }
 
     async getInstancesAndQueues (search?: FindOptionsWhere<InstanceSingle> | FindOptionsWhere<InstanceSingle>[]) {
