@@ -18,6 +18,13 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     user: root
     command: node dist/main
+    environment:
+      - DB_HOST
+      - REDIS_URL
+      - NODE_ENV
+      - SECRET_TOKEN
+      - GITHUB_TOKEN
+      - SERVER_URL
 
   redis:
     image: redis
