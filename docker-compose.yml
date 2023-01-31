@@ -11,9 +11,6 @@ services:
     restart: always
     ports:
       - ${APP_PORT}:${APP_PORT}
-    depends_on:
-      - redis
-      - bdd
     networks:
       - internalapp 
       - default
