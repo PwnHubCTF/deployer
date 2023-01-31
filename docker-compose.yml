@@ -20,11 +20,16 @@ services:
     command: node dist/main
     environment:
       - DB_HOST
+      - DB_USER
+      - DB_PASSWORD
+      - DB_PORT
+      - DB_NAME
       - REDIS_URL
       - NODE_ENV
       - SECRET_TOKEN
       - GITHUB_TOKEN
       - SERVER_URL
+      - APP_PORT
 
   redis:
     image: redis
