@@ -40,12 +40,12 @@ export class InstancesService {
         let inBuild = await this.buildQueue.getJobs(['active', 'waiting'])
         let inDestroy = await this.destroyQueue.getJobs(['active', 'waiting'])
 
-        if(search.challengeId){
+        if(search?.challengeId){
             inBuild = inBuild.filter(j => j.data.challengeId == search.challengeId)
             inDestroy = inDestroy.filter(j => j.data.challengeId == search.challengeId)
         }
 
-        if(search.owner){
+        if(search?.owner){
             inBuild = inBuild.filter(j => j.data.owner == search.owner)
             inDestroy = inDestroy.filter(j => j.data.owner == search.owner)
         }
