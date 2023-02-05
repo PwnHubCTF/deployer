@@ -21,5 +21,10 @@ export class DeployInstanceDto {
     @IsNotEmpty()
     challengeId: string;
 
+    @ApiProperty({
+        required: false
+    })
+    @IsNotEmpty()
+    customEnv?: NodeJS.ProcessEnv;
     
 }

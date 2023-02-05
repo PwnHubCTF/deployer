@@ -103,12 +103,12 @@ export class InstancesService {
         let waitingJobsCount = waitingJobs.filter(j => j.data.owner === payload.owner).length
 
         if (currentInstances.length + waitingJobsCount + activeJobsCount >= this.instancesLimit) throw new HttpException("You reach your instance limit", 403)
-
-
+        
         return await this.buildQueue.add({
             owner: payload.owner,
             githubUrl: payload.githubUrl,
             challengeId: payload.challengeId,
+            customEnv: payload.customEnv
         })
     }
 

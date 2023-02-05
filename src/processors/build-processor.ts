@@ -49,7 +49,7 @@ export default async function (job: Job, cb: DoneCallback) {
   
   try {
       job.progress('building.upAll')
-      await compose.upAll({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
+      await compose.upAll({ cwd: projectPath, composeOptions: [["--project-name", projectName]], env: job.data.customEnv })
       job.progress('building.getContainers')
       const res = await compose.ps({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
       const openedPort = res.out.substring(res.out.indexOf('0.0.0.0:') + '0.0.0.0:'.length, res.out.indexOf('->'))
