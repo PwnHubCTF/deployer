@@ -10,6 +10,7 @@ import { CronExpression } from '@nestjs/schedule/dist';
 
 @Injectable()
 export class InstancesService {
+    private instancesLimit = process.env.INSTANCES_LIMIT || 1
 
     constructor(
         @InjectQueue('destroy') private destroyQueue: Queue,
@@ -70,17 +71,29 @@ export class InstancesService {
     async createInstance (payload: DeployInstanceDto) {
         if(!payload.challengeId || !payload.githubUrl || !payload.owner) throw new HttpException("Missing informations", 403)
 
-        let currentInstances = await this.instanceRepository.find({ where: { owner: payload.owner } })
-        if (currentInstances.length >= 1) throw new HttpException("You already have an instance deployed", 403)
+        let currentChallengeInstances = await this.instanceRepository.find({ where: { owner: payload.owner, challengeId: payload.challengeId} })
+        if (currentChallengeInstances.length >= 1) throw new HttpException("You already have an instance of this challenge deployed", 403)
+
+        let activeChallengeJobs = await this.buildQueue.getJobs(['active'])
+        let activeChallengeJobsCount = activeChallengeJobs.filter(j => j.data.owner === payload.owner && j.data.challengeId === payload.challengeId).length
+        if (activeChallengeJobsCount >= 1) throw new HttpException("You already have an instance of this challenge in build", 403)
+
+
+        let waitingChallengeJobs = await this.buildQueue.getJobs(['waiting'])
+        let waitingChallengeJobsCount = waitingChallengeJobs.filter(j => j.data.owner === payload.owner && j.data.challengeId === payload.challengeId).length
+        if (waitingChallengeJobsCount >= 1) throw new HttpException("You already have a build of this challenge in queue", 403)
+
+        let currentInstances = await this.instanceRepository.find({ where: { owner: payload.owner} })
 
         let activeJobs = await this.buildQueue.getJobs(['active'])
         let activeJobsCount = activeJobs.filter(j => j.data.owner === payload.owner).length
-        if (activeJobsCount >= 1) throw new HttpException("You already have an instance in build", 403)
 
 
         let waitingJobs = await this.buildQueue.getJobs(['waiting'])
         let waitingJobsCount = waitingJobs.filter(j => j.data.owner === payload.owner).length
-        if (waitingJobsCount >= 1) throw new HttpException("You already have a build in queue", 403)
+        
+        if (currentInstances.length + waitingJobsCount + activeJobsCount >= this.instancesLimit) throw new HttpException("You reach your instance limit", 403)
+
 
         return await this.buildQueue.add({
             owner: payload.owner,
