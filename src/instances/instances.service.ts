@@ -35,10 +35,20 @@ export class InstancesService {
         return await this.getInstancesAndQueues({ owner: id })
     }
 
-    async getInstancesAndQueues (search?: FindOptionsWhere<InstanceMultiple> | FindOptionsWhere<InstanceMultiple>[]) {
+    async getInstancesAndQueues (search?: any) {
         const instances = await this.instanceRepository.find({ where: search })
-        const inBuild = await this.buildQueue.getJobs(['active', 'waiting'])
-        const inDestroy = await this.destroyQueue.getJobs(['active', 'waiting'])
+        let inBuild = await this.buildQueue.getJobs(['active', 'waiting'])
+        let inDestroy = await this.destroyQueue.getJobs(['active', 'waiting'])
+
+        if(search.challengeId){
+            inBuild = inBuild.filter(j => j.data.challengeId == search.challengeId)
+            inDestroy = inDestroy.filter(j => j.data.challengeId == search.challengeId)
+        }
+
+        if(search.owner){
+            inBuild = inBuild.filter(j => j.data.owner == search.owner)
+            inDestroy = inDestroy.filter(j => j.data.owner == search.owner)
+        }
 
         let url = process.env.SERVER_URL
         if(!url.includes('http')){
@@ -91,7 +101,7 @@ export class InstancesService {
 
         let waitingJobs = await this.buildQueue.getJobs(['waiting'])
         let waitingJobsCount = waitingJobs.filter(j => j.data.owner === payload.owner).length
-        
+
         if (currentInstances.length + waitingJobsCount + activeJobsCount >= this.instancesLimit) throw new HttpException("You reach your instance limit", 403)
 
 
