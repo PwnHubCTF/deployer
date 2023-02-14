@@ -10,7 +10,7 @@ services:
       - redis
     restart: always
     ports:
-      - ${APP_PORT}:${APP_PORT}
+      - "${APP_PORT}:${APP_PORT}"
     networks:
       - internalapp 
       - default
