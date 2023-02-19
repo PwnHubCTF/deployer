@@ -23,7 +23,7 @@ export class InstancesBuildProcessor {
             await this.instanceRepository.create({
                 githubUrl: job.data.githubUrl,
                 owner: job.data.owner,
-                serverUrl: job.data.serverUrl,
+                serverUrl: process.env.SERVER_URL,
                 port: result.port,
                 composeProjectName: result.composeProjectName,
                 challengeId: job.data.challengeId,

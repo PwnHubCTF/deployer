@@ -45,7 +45,7 @@ export default async function (job: Job, cb: DoneCallback) {
     const res = await compose.ps({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
     const openedPort = res.out.substring(res.out.indexOf('0.0.0.0:') + '0.0.0.0:'.length, res.out.indexOf('->'))
 
-    job.data.serverUrl = process.env.SERVER_URL
+    job.data.serverUrl = "process.env.SERVER_URL"
     // Return the port of the deployed challenge
     cb(null, {
       port: openedPort,
