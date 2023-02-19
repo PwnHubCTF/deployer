@@ -33,12 +33,7 @@ export class InstanceSingleService {
         const inBuild = await this.buildAdminQueue.getJobs(['active', 'waiting'])
         const inDestroy = await this.destroyAdminQueue.getJobs(['active', 'waiting'])
 
-        let url = process.env.SERVER_URL
-        if(!url.includes('http')){
-            url = `http://${url}`
-        }
-
-        return [...instances.map(i => { return { ...i, url: `${url}:${i.port}` } }), ...[...inBuild, ...inDestroy].map(j => { return { ...j.data, progress: j.progress() } })]
+        return [...instances, ...[...inBuild, ...inDestroy].map(j => { return { ...j.data, progress: j.progress() } })]
     }
 
     async destroyAdminInstance (id: string) {

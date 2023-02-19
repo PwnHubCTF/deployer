@@ -31,38 +31,29 @@ export default async function (job: Job, cb: DoneCallback) {
   // Parse config file
   if (!fs.existsSync(`${projectPath}/docker-compose.yml`)) throw new Error("docker-compose.yml not found in project")
 
-
-  /**
-   * configFile:
-   * id: ID of the challenge
-   * hosting: instance
-   */
-
-  // Parse config
-
   // Build docker
   job.progress('building')
   let projectName = `${job.data.challengeId}`.toLowerCase()
-  if(job.data.owner){
+  if (job.data.owner) {
     projectName = `${job.data.challengeId}_${job.data.owner}`.toLowerCase()
   }
-  
-  try {
-      job.progress('building.upAll')
-      await compose.upAll({ cwd: projectPath, composeOptions: [["--project-name", projectName]], env: job.data.customEnv })
-      job.progress('building.getContainers')
-      const res = await compose.ps({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
-      const openedPort = res.out.substring(res.out.indexOf('0.0.0.0:') + '0.0.0.0:'.length, res.out.indexOf('->'))
-  
 
-  // Return the port of the deployed challenge
-  cb(null, {
-    port: openedPort,
-    composeProjectName: projectName
-  });
-} catch (error) {
-  console.log(error);
-}
+  try {
+    job.progress('building.upAll')
+    await compose.upAll({ cwd: projectPath, composeOptions: [["--project-name", projectName]], env: job.data.customEnv })
+    job.progress('building.getContainers')
+    const res = await compose.ps({ cwd: projectPath, composeOptions: [["--project-name", projectName]] })
+    const openedPort = res.out.substring(res.out.indexOf('0.0.0.0:') + '0.0.0.0:'.length, res.out.indexOf('->'))
+
+    job.data.serverUrl = process.env.SERVER_URL
+    // Return the port of the deployed challenge
+    cb(null, {
+      port: openedPort,
+      composeProjectName: projectName
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 interface GithubInfos {
@@ -117,7 +108,7 @@ async function getFromGithub (job: Job) {
 
   // Setup github module from infos
   const git: SimpleGit = simpleGit(path, { config: ['core.sparsecheckout=true'] });
- 
+
 
   // If res, a dir has been created -> project doesn't exists and need to be setup
   if (res) {
@@ -125,8 +116,8 @@ async function getFromGithub (job: Job) {
     job.progress('cloning.init')
     await git.init()
     let url = `https://${infos.url.slice(8)}.git`
-    if(process.env.GITHUB_TOKEN){
-      url=`https://${process.env.GITHUB_TOKEN}@${infos.url.slice(8)}.git`
+    if (process.env.GITHUB_TOKEN) {
+      url = `https://${process.env.GITHUB_TOKEN}@${infos.url.slice(8)}.git`
     }
     await git.addRemote('origin', url)
   } else {

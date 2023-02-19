@@ -20,6 +20,7 @@ export class InstancesSingleBuildProcessor {
 
         try {
             await this.instanceRepository.create({
+                serverUrl: job.data.serverUrl,
                 githubUrl: job.data.githubUrl,
                 port: result.port,
                 composeProjectName: result.composeProjectName,

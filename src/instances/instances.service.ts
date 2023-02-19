@@ -49,13 +49,8 @@ export class InstancesService {
             inBuild = inBuild.filter(j => j.data.owner == search.owner)
             inDestroy = inDestroy.filter(j => j.data.owner == search.owner)
         }
-
-        let url = process.env.SERVER_URL
-        if(!url.includes('http')){
-            url = `http://${url}`
-        }
         
-        return [...instances.map(i => { return { ...i, url: `${url}:${i.port}` } }), ...[...inBuild, ...inDestroy].map(j => { return { ...j.data, progress: j.progress() } })]
+        return [...instances, ...[...inBuild, ...inDestroy].map(j => { return { ...j.data, progress: j.progress() } })]
     }
 
     async destroyInstance (id: string) {
