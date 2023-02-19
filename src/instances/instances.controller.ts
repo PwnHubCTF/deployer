@@ -34,6 +34,7 @@ export class InstancesController {
                 return {
                     creation: instance[0].creation,
                     destroyAt: instance[0].destroyAt,
+                    port: instance[0].port,
                     serverUrl: instance[0].serverUrl,
                     id: instance[0].id
                 }
