@@ -30,11 +30,11 @@ export class InstancesController {
         if (instance.length == 0) {
             return { "status": "stopped" }
         } else {
-            if (instance[0].url)
+            if (instance[0].serverUrl)
                 return {
                     creation: instance[0].creation,
                     destroyAt: instance[0].destroyAt,
-                    url: instance[0].url,
+                    serverUrl: instance[0].serverUrl,
                     id: instance[0].id
                 }
 
