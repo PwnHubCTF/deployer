@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { DeployInstanceDto } from './dto/deploy-instance.dto';
+import { SetDestroyCooldownDto } from './dto/set-destroy-cooldown.dto';
 import { InstancesService } from './instances.service';
 
 @ApiSecurity('X-API-KEY', ['X-API-KEY'])
@@ -48,6 +49,12 @@ export class InstancesController {
     @Post()
     async deployInstance (@Body() payload: DeployInstanceDto) {
         await this.instanceService.createInstance(payload);
+        return { "status": "Enqueued" }
+    }
+
+    @Post('cooldown/:id')
+    async setDestroyCooldown (@Param('id') id: string, @Body() payload: SetDestroyCooldownDto) {
+        await this.instanceService.setDestroyCooldown(id, payload);
         return { "status": "Enqueued" }
     }
 

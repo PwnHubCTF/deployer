@@ -7,6 +7,7 @@ import { FindOptionsWhere, LessThanOrEqual, Repository } from 'typeorm';
 import { InstanceMultiple } from './entities/instance-multiple.entity';
 import { Cron } from '@nestjs/schedule';
 import { CronExpression } from '@nestjs/schedule/dist';
+import { SetDestroyCooldownDto } from './dto/set-destroy-cooldown.dto';
 
 @Injectable()
 export class InstancesService {
@@ -105,6 +106,14 @@ export class InstancesService {
             challengeId: payload.challengeId,
             customEnv: payload.customEnv
         })
+    }
+
+    async setDestroyCooldown(id: string, payload: SetDestroyCooldownDto){
+        const instance = await this.instanceRepository.findOne({ where: { id } })
+        if (!instance) throw new HttpException("Instance undefined", 404)
+
+        instance.destroyAt = new Date(Date.now() + payload.cooldown * 1000)
+        return await instance.save()
     }
 
     @Cron(CronExpression.EVERY_30_SECONDS)
