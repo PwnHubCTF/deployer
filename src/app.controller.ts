@@ -11,4 +11,15 @@ export class AppController {
   testApi () {
     return { "status": this.appService.getAppStatus() }
   }
+
+  
+  @Get('ressources')
+  async ressources () {
+    try {
+      const disk = await this.appService.getDiskSize()
+      return { "disk": disk }
+    } catch (error) {
+      return { "disk": 'No infos' }
+    }
+  }
 }
