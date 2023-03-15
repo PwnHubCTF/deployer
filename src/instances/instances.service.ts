@@ -1,18 +1,16 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
-import { DeployInstanceDto } from './dto/deploy-instance.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, LessThanOrEqual, Repository } from 'typeorm';
-import { InstanceMultiple } from './entities/instance-multiple.entity';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { CronExpression } from '@nestjs/schedule/dist';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Queue } from 'bull';
+import { LessThanOrEqual, Repository } from 'typeorm';
+import { DeployInstanceDto } from './dto/deploy-instance.dto';
 import { SetDestroyCooldownDto } from './dto/set-destroy-cooldown.dto';
+import { InstanceMultiple } from './entities/instance-multiple.entity';
 
 @Injectable()
 export class InstancesService {
-    private instancesLimit = process.env.INSTANCES_LIMIT || 1
-
     constructor(
         @InjectQueue('destroy') private destroyQueue: Queue,
         @InjectQueue('build') private buildQueue: Queue,
@@ -89,23 +87,26 @@ export class InstancesService {
         let waitingChallengeJobsCount = waitingChallengeJobs.filter(j => j.data.owner === payload.owner && j.data.challengeId === payload.challengeId).length
         if (waitingChallengeJobsCount >= 1) throw new HttpException("You already have a build of this challenge in queue", 403)
 
-        let currentInstances = await this.instanceRepository.find({ where: { owner: payload.owner} })
 
-        let activeJobs = await this.buildQueue.getJobs(['active'])
-        let activeJobsCount = activeJobs.filter(j => j.data.owner === payload.owner).length
-
-
-        let waitingJobs = await this.buildQueue.getJobs(['waiting'])
-        let waitingJobsCount = waitingJobs.filter(j => j.data.owner === payload.owner).length
-
-        if (currentInstances.length + waitingJobsCount + activeJobsCount >= this.instancesLimit) throw new HttpException("You reach your instance limit", 403)
-        
         return await this.buildQueue.add({
             owner: payload.owner,
             githubUrl: payload.githubUrl,
             challengeId: payload.challengeId,
             customEnv: payload.customEnv
         })
+    }
+
+    async getInstancesCountForOwner(owner: string){
+        let currentInstances = await this.instanceRepository.find({ where: { owner: owner} })
+
+        let activeJobs = await this.buildQueue.getJobs(['active'])
+        let activeJobsCount = activeJobs.filter(j => j.data.owner === owner).length
+
+
+        let waitingJobs = await this.buildQueue.getJobs(['waiting'])
+        let waitingJobsCount = waitingJobs.filter(j => j.data.owner === owner).length
+
+        return currentInstances.length + waitingJobsCount + activeJobsCount
     }
 
     async setDestroyCooldown(id: string, payload: SetDestroyCooldownDto){

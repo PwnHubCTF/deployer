@@ -20,6 +20,11 @@ export class InstancesController {
         return await this.instanceService.getInstancesFromChallengeId(id);
     }
 
+    @Get('/owner/count/:owner_id')
+    async getInstancesCountFromOwner (@Param('owner_id') id: string) {
+        return await this.instanceService.getInstancesCountForOwner(id);
+    }
+
     @Get('/owner/:owner_id')
     async getInstanceFromOwner (@Param('owner_id') id: string) {
         return await this.instanceService.getInstancesFromOwner(id);
