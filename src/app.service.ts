@@ -10,7 +10,7 @@ export class AppService {
   async getDiskSize () {
     return new Promise((resolve, reject) => {
       try {
-        exec(`df -hP | awk 'BEGIN {printf"{\"discarray\":["}{if($1=="Filesystem")next;if(a)printf",";printf"{\"mount\":\""$6"\",\"size\":\""$2"\",\"used\":\""$3"\",\"avail\":\""$4"\",\"use%\":\""$5"\"}";a++;}END{print"]}";}'`, (error, stdout, stderr) => {
+        exec(`df / -hP | awk '{if($1=="Filesystem")next;print "{\"size\":\""$2"\",","\"used\":\""$3"\",","\"available\":\""$4"\",","\"use\":\""$5"\"}"}'`, (error, stdout, stderr) => {
           if (error) {
             reject(stderr)
           } {
